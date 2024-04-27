@@ -11,14 +11,12 @@ import (
 func UserSeeder(db *gorm.DB) error {
 	var dummyUsers = []entity.User{
 		{
-			Name:     "Admin",
-			Email:    "admin@gmail.com",
+			Username: "admin1",
 			Password: "admin1",
 			Role:     constant.EnumRoleAdmin,
 		},
 		{
-			Name:     "User",
-			Email:    "user@gmail.com",
+			Username: "user1",
 			Password: "user1",
 			Role:     constant.EnumRoleUser,
 		},
@@ -33,12 +31,12 @@ func UserSeeder(db *gorm.DB) error {
 
 	for _, data := range dummyUsers {
 		var user entity.User
-		err := db.Where(&entity.User{Email: data.Email}).First(&user).Error
+		err := db.Where(&entity.User{Username: data.Username}).First(&user).Error
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			return err
 		}
 
-		isData := db.Find(&user, "email = ?", data.Email).RowsAffected
+		isData := db.Find(&user, "username = ?", data.Username).RowsAffected
 		if isData == 0 {
 			if err := db.Create(&data).Error; err != nil {
 				return err

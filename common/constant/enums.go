@@ -4,6 +4,6 @@ const (
 	EnumRoleAdmin = "admin"
 	EnumRoleUser  = "user"
 
-	DBAttrID    = "id"
-	DBAttrEmail = "email"
+	DBAttrID       = "id"
+	DBAttrUsername = "username"
 )

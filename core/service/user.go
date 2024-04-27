@@ -20,11 +20,10 @@ type userService struct {
 }
 
 type UserService interface {
-	VerifyLogin(ctx context.Context, email string, password string) bool
-	CreateNewUser(ctx context.Context, ud dto.UserRegisterRequest) (dto.UserResponse, error)
+	VerifyLogin(ctx context.Context, username string, password string) bool
+	CreateNewUser(ctx context.Context, ud dto.UserAuthenticationRequest) (dto.UserResponse, error)
 	GetAllUsers(ctx context.Context, req base.GetsRequest) ([]dto.UserResponse, base.PaginationResponse, error)
 	GetUserByPrimaryKey(ctx context.Context, key string, value string) (dto.UserResponse, error)
-	UpdateSelfName(ctx context.Context, ud dto.UserNameUpdateRequest, id string) (dto.UserResponse, error)
 	UpdateUserByID(ctx context.Context, ud dto.UserUpdateRequest, id string) (dto.UserResponse, error)
 	DeleteUserByID(ctx context.Context, id string) error
 	ChangePicture(ctx context.Context, req dto.UserChangePictureRequest, userID string) (dto.UserResponse, error)
@@ -35,8 +34,8 @@ func NewUserService(userR repository.UserRepository) UserService {
 	return &userService{userRepository: userR}
 }
 
-func (us *userService) VerifyLogin(ctx context.Context, email string, password string) bool {
-	userCheck, err := us.userRepository.GetUserByPrimaryKey(ctx, nil, constant.DBAttrEmail, email)
+func (us *userService) VerifyLogin(ctx context.Context, username string, password string) bool {
+	userCheck, err := us.userRepository.GetUserByPrimaryKey(ctx, nil, constant.DBAttrUsername, username)
 	if err != nil {
 		return false
 	}
@@ -45,25 +44,24 @@ func (us *userService) VerifyLogin(ctx context.Context, email string, password s
 		return false
 	}
 
-	if userCheck.Email == email && passwordCheck {
+	if userCheck.Username == username && passwordCheck {
 		return true
 	}
 	return false
 }
 
-func (us *userService) CreateNewUser(ctx context.Context, ud dto.UserRegisterRequest) (dto.UserResponse, error) {
-	userCheck, err := us.userRepository.GetUserByPrimaryKey(ctx, nil, constant.DBAttrEmail, ud.Email)
+func (us *userService) CreateNewUser(ctx context.Context, ud dto.UserAuthenticationRequest) (dto.UserResponse, error) {
+	userCheck, err := us.userRepository.GetUserByPrimaryKey(ctx, nil, constant.DBAttrUsername, ud.Username)
 	if err != nil {
 		return dto.UserResponse{}, err
 	}
 
 	if !(reflect.DeepEqual(userCheck, entity.User{})) {
-		return dto.UserResponse{}, errs.ErrEmailAlreadyExists
+		return dto.UserResponse{}, errs.ErrUsernameAlreadyExists
 	}
 
 	user := entity.User{
-		Name:     ud.Name,
-		Email:    ud.Email,
+		Username: ud.Username,
 		Password: ud.Password,
 		Role:     constant.EnumRoleUser,
 	}
@@ -75,10 +73,9 @@ func (us *userService) CreateNewUser(ctx context.Context, ud dto.UserRegisterReq
 	}
 
 	return dto.UserResponse{
-		ID:    newUser.ID.String(),
-		Name:  newUser.Name,
-		Email: newUser.Email,
-		Role:  newUser.Role,
+		ID:       newUser.ID.String(),
+		Username: newUser.Username,
+		Role:     newUser.Role,
 	}, nil
 }
 
@@ -103,11 +100,10 @@ func (us *userService) GetAllUsers(ctx context.Context, req base.GetsRequest) (
 
 	for _, user := range users {
 		userResp = append(userResp, dto.UserResponse{
-			ID:      user.ID.String(),
-			Name:    user.Name,
-			Email:   user.Email,
-			Role:    user.Role,
-			Picture: user.Picture,
+			ID:       user.ID.String(),
+			Username: user.Username,
+			Role:     user.Role,
+			Picture:  user.Picture,
 		})
 	}
 
@@ -131,29 +127,10 @@ func (us *userService) GetUserByPrimaryKey(ctx context.Context, key string, val 
 	}
 
 	return dto.UserResponse{
-		ID:      user.ID.String(),
-		Name:    user.Name,
-		Email:   user.Email,
-		Role:    user.Role,
-		Picture: user.Picture,
-	}, nil
-}
-
-func (us *userService) UpdateSelfName(ctx context.Context,
-	ud dto.UserNameUpdateRequest, id string) (dto.UserResponse, error) {
-	user, err := us.userRepository.GetUserByPrimaryKey(ctx, nil, constant.DBAttrID, id)
-	if err != nil {
-		return dto.UserResponse{}, err
-	}
-
-	user, err = us.userRepository.UpdateNameUser(ctx, nil, ud.Name, user)
-	if err != nil {
-		return dto.UserResponse{}, err
-	}
-
-	return dto.UserResponse{
-		ID:   user.ID.String(),
-		Name: user.Name,
+		ID:       user.ID.String(),
+		Username: user.Username,
+		Role:     user.Role,
+		Picture:  user.Picture,
 	}, nil
 }
 
@@ -168,21 +145,20 @@ func (us *userService) UpdateUserByID(ctx context.Context,
 		return dto.UserResponse{}, errs.ErrUserNotFound
 	}
 
-	if ud.Email != "" && ud.Email != user.Email {
-		us, err := us.userRepository.GetUserByPrimaryKey(ctx, nil, constant.DBAttrEmail, ud.Email)
+	if ud.Username != "" && ud.Username != user.Username {
+		us, err := us.userRepository.GetUserByPrimaryKey(ctx, nil, constant.DBAttrUsername, ud.Username)
 		if err != nil {
 			return dto.UserResponse{}, err
 		}
 
 		if !(reflect.DeepEqual(us, entity.User{})) {
-			return dto.UserResponse{}, errs.ErrEmailAlreadyExists
+			return dto.UserResponse{}, errs.ErrUsernameAlreadyExists
 		}
 	}
 
 	userEdit := entity.User{
 		ID:       user.ID,
-		Name:     ud.Name,
-		Email:    ud.Email,
+		Username: ud.Username,
 		Role:     ud.Role,
 		Password: ud.Password,
 	}
@@ -192,22 +168,15 @@ func (us *userService) UpdateUserByID(ctx context.Context,
 		return dto.UserResponse{}, err
 	}
 
-	if edited.Name == "" {
-		edited.Name = user.Name
-	}
-	if edited.Email == "" {
-		edited.Email = user.Email
-	}
 	if edited.Role == "" {
 		edited.Role = user.Role
 	}
 
 	return dto.UserResponse{
-		ID:      edited.ID.String(),
-		Name:    edited.Name,
-		Email:   edited.Email,
-		Role:    edited.Role,
-		Picture: user.Picture,
+		ID:       edited.ID.String(),
+		Username: edited.Username,
+		Role:     edited.Role,
+		Picture:  user.Picture,
 	}, nil
 }
 

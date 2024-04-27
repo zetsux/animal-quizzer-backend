@@ -3,33 +3,21 @@ package dto
 import "mime/multipart"
 
 type (
-	UserRegisterRequest struct {
-		Name     string `json:"name" form:"name" binding:"required"`
-		Email    string `json:"email" form:"email" binding:"required"`
+	UserAuthenticationRequest struct {
+		Username string `json:"username" form:"username" binding:"required"`
 		Password string `json:"password" form:"password" binding:"required"`
 	}
 
 	UserResponse struct {
-		ID      string `json:"id"`
-		Name    string `json:"name,omitempty"`
-		Email   string `json:"email,omitempty"`
-		Role    string `json:"role,omitempty"`
-		Picture string `json:"picture,omitempty"`
-	}
-
-	UserLoginRequest struct {
-		Email    string `json:"email" form:"email" binding:"required"`
-		Password string `json:"password" form:"password" binding:"required"`
-	}
-
-	UserNameUpdateRequest struct {
-		Name string `json:"name" binding:"required"`
+		ID       string `json:"id"`
+		Username string `json:"username,omitempty"`
+		Role     string `json:"role,omitempty"`
+		Picture  string `json:"picture,omitempty"`
 	}
 
 	UserUpdateRequest struct {
 		ID       string `json:"id"`
-		Name     string `json:"name" form:"name"`
-		Email    string `json:"email" form:"email"`
+		Username string `json:"username" form:"username"`
 		Role     string `json:"role" form:"role"`
 		Password string `json:"password" form:"password"`
 	}
