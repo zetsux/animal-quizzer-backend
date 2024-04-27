@@ -28,5 +28,19 @@ func DBSeed(db *gorm.DB) error {
 		return err
 	}
 
+	animalTypeMap, err := seeder.AnimalTypeSeeder(db)
+	if err != nil {
+		return err
+	}
+
+	animalMap, err := seeder.AnimalSeeder(db, animalTypeMap)
+	if err != nil {
+		return err
+	}
+
+	if err := seeder.QuizSeeder(db, animalMap); err != nil {
+		return err
+	}
+
 	return nil
 }
