@@ -15,11 +15,6 @@ func UserSeeder(db *gorm.DB) error {
 			Password: "admin1",
 			Role:     constant.EnumRoleAdmin,
 		},
-		{
-			Username: "user1",
-			Password: "user1",
-			Role:     constant.EnumRoleUser,
-		},
 	}
 
 	hasTable := db.Migrator().HasTable(&entity.User{})

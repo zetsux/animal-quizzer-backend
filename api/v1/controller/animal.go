@@ -15,6 +15,7 @@ type animalController struct {
 
 type AnimalController interface {
 	GetAllAnimals(ctx *gin.Context)
+	GetAnimalInventory(ctx *gin.Context)
 	GetAnimal(ctx *gin.Context)
 }
 
@@ -26,6 +27,25 @@ func NewAnimalController(animalS service.AnimalService) AnimalController {
 
 func (atc *animalController) GetAllAnimals(ctx *gin.Context) {
 	animals, err := atc.animalService.GetAllAnimals(ctx)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse(
+			messages.MsgAnimalFetchFailed,
+			err.Error(), http.StatusBadRequest,
+		))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, base.CreateSuccessResponse(
+		messages.MsgAnimalFetchSuccess,
+		http.StatusOK, animals,
+	))
+}
+
+func (atc *animalController) GetAnimalInventory(ctx *gin.Context) {
+	userID := ctx.MustGet("ID").(string)
+	filter := ctx.Query("filter")
+
+	animals, err := atc.animalService.GetAnimalInventory(ctx, userID, filter)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse(
 			messages.MsgAnimalFetchFailed,

@@ -16,7 +16,9 @@ import (
 )
 
 type userService struct {
-	userRepository repository.UserRepository
+	userRepository       repository.UserRepository
+	animalTypeRepository repository.AnimalTypeRepository
+	questRepository      repository.QuestRepository
 }
 
 type UserService interface {
@@ -30,8 +32,8 @@ type UserService interface {
 	DeletePicture(ctx context.Context, userID string) error
 }
 
-func NewUserService(userR repository.UserRepository) UserService {
-	return &userService{userRepository: userR}
+func NewUserService(userR repository.UserRepository, atr repository.AnimalTypeRepository, qr repository.QuestRepository) UserService {
+	return &userService{userRepository: userR, animalTypeRepository: atr, questRepository: qr}
 }
 
 func (us *userService) VerifyLogin(ctx context.Context, username string, password string) bool {
@@ -51,7 +53,13 @@ func (us *userService) VerifyLogin(ctx context.Context, username string, passwor
 }
 
 func (us *userService) CreateNewUser(ctx context.Context, ud dto.UserAuthenticationRequest) (dto.UserResponse, error) {
-	userCheck, err := us.userRepository.GetUserByPrimaryKey(ctx, nil, constant.DBAttrUsername, ud.Username)
+	db, err := us.userRepository.TxRepository().BeginTx(ctx)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+	defer us.userRepository.TxRepository().CommitOrRollbackTx(ctx, db, nil)
+
+	userCheck, err := us.userRepository.GetUserByPrimaryKey(ctx, db, constant.DBAttrUsername, ud.Username)
 	if err != nil {
 		return dto.UserResponse{}, err
 	}
@@ -67,9 +75,21 @@ func (us *userService) CreateNewUser(ctx context.Context, ud dto.UserAuthenticat
 	}
 
 	// create new user
-	newUser, err := us.userRepository.CreateNewUser(ctx, nil, user)
+	newUser, err := us.userRepository.CreateNewUser(ctx, db, user)
 	if err != nil {
 		return dto.UserResponse{}, err
+	}
+
+	animalTypes, err := us.animalTypeRepository.GetAllAnimalTypes(ctx, db)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+	for _, animalType := range animalTypes {
+		us.questRepository.CreateNewQuest(ctx, db, entity.Quest{
+			Step:         1,
+			UserID:       newUser.ID.String(),
+			AnimalTypeID: animalType.ID.String(),
+		})
 	}
 
 	return dto.UserResponse{

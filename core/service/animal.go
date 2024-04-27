@@ -16,6 +16,7 @@ type animalService struct {
 
 type AnimalService interface {
 	GetAllAnimals(ctx context.Context) ([]dto.AnimalResponse, error)
+	GetAnimalInventory(ctx context.Context, userID string, filter string) (animalsResp []dto.AnimalResponse, err error)
 	GetAnimalByID(ctx context.Context, id string) (dto.AnimalResponse, error)
 }
 
@@ -24,7 +25,7 @@ func NewAnimalService(animalR repository.AnimalRepository) AnimalService {
 }
 
 func (as *animalService) GetAllAnimals(ctx context.Context) (animalsResp []dto.AnimalResponse, err error) {
-	animals, err := as.animalRepository.GetAllAnimals(ctx, nil)
+	animals, err := as.animalRepository.GetAllAnimals(ctx, nil, "")
 	if err != nil {
 		return nil, err
 	}
@@ -44,6 +45,55 @@ func (as *animalService) GetAllAnimals(ctx context.Context) (animalsResp []dto.A
 		})
 	}
 	return animalsResp, nil
+}
+
+func (as *animalService) GetAnimalInventory(ctx context.Context, userID string, filter string) (animalsResp []dto.AnimalResponse, err error) {
+	ownedAnimals, err := as.animalRepository.GetAllAnimalsByUser(ctx, nil, userID, true, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	missingAnimals, err := as.animalRepository.GetAllAnimalsByUser(ctx, nil, userID, false, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var ownedAnimalsResp []dto.AnimalResponse
+	for _, animal := range ownedAnimals {
+		isOwned := true
+		ownedAnimalsResp = append(ownedAnimalsResp, dto.AnimalResponse{
+			ID:   animal.ID.String(),
+			Name: animal.Name,
+			Step: animal.Step,
+			AnimalType: dto.AnimalTypeResponse{
+				ID:   animal.AnimalType.ID.String(),
+				Name: animal.AnimalType.Name,
+			},
+			IsOwned:         &isOwned,
+			SilhouetteImage: animal.SilhouetteImage,
+			RealImage:       animal.RealImage,
+			BadgeImage:      animal.BadgeImage,
+		})
+	}
+
+	var missingAnimalsResp []dto.AnimalResponse
+	for _, animal := range missingAnimals {
+		isOwned := false
+		missingAnimalsResp = append(missingAnimalsResp, dto.AnimalResponse{
+			ID:   animal.ID.String(),
+			Name: animal.Name,
+			Step: animal.Step,
+			AnimalType: dto.AnimalTypeResponse{
+				ID:   animal.AnimalType.ID.String(),
+				Name: animal.AnimalType.Name,
+			},
+			IsOwned:         &isOwned,
+			SilhouetteImage: animal.SilhouetteImage,
+			RealImage:       animal.RealImage,
+			BadgeImage:      animal.BadgeImage,
+		})
+	}
+	return append(ownedAnimalsResp, missingAnimalsResp...), nil
 }
 
 func (as *animalService) GetAnimalByID(ctx context.Context, id string) (dto.AnimalResponse, error) {

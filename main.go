@@ -20,10 +20,6 @@ func main() {
 		jwtS = service.NewJWTService()
 		txR  = repository.NewTxRepository(db)
 
-		userR = repository.NewUserRepository(txR)
-		userS = service.NewUserService(userR)
-		userC = controller.NewUserController(userS, jwtS)
-
 		fileC = controller.NewFileController()
 
 		animalTypeR = repository.NewAnimalTypeRepository(txR)
@@ -36,7 +32,11 @@ func main() {
 
 		questR = repository.NewQuestRepository(txR)
 		questS = service.NewQuestService(questR)
-		questC = controller.NewQuestController(questS, jwtS)
+		questC = controller.NewQuestController(questS)
+
+		userR = repository.NewUserRepository(txR)
+		userS = service.NewUserService(userR, animalTypeR, questR)
+		userC = controller.NewUserController(userS, jwtS)
 	)
 
 	defer config.DBClose(db)
@@ -51,7 +51,7 @@ func main() {
 	router.UserRouter(server, userC, jwtS)
 	router.FileRouter(server, fileC)
 	router.AnimalTypeRouter(server, animalTypeC)
-	router.AnimalRouter(server, animalC)
+	router.AnimalRouter(server, animalC, jwtS)
 	router.QuestRouter(server, questC, jwtS)
 
 	// Running in localhost:8080

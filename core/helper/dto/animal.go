@@ -11,6 +11,7 @@ type (
 		Food               string             `json:"food,omitempty"`
 		Reproduction       string             `json:"reproduction,omitempty"`
 		FunFact            string             `json:"fun_fact,omitempty"`
+		IsOwned            *bool              `json:"is_owned,omitempty"`
 		ConservationStatus string             `json:"conservation_status,omitempty"`
 		AnimalType         AnimalTypeResponse `json:"animal_type,omitempty"`
 		SilhouetteImage    string             `json:"silhouette_image,omitempty"`

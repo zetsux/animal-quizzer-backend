@@ -12,7 +12,6 @@ import (
 
 type questController struct {
 	questService service.QuestService
-	jwtService   service.JWTService
 }
 
 type QuestController interface {
@@ -21,10 +20,9 @@ type QuestController interface {
 	AdvanceQuest(ctx *gin.Context)
 }
 
-func NewQuestController(questS service.QuestService, jwtS service.JWTService) QuestController {
+func NewQuestController(questS service.QuestService) QuestController {
 	return &questController{
 		questService: questS,
-		jwtService:   jwtS,
 	}
 }
 
