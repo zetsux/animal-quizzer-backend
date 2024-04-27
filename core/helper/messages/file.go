@@ -1,6 +1,6 @@
 package messages
 
 const (
-	MsgFileFetchSuccess = "File fetched successfully"
-	MsgFileFetchFailed  = "Failed to fetch file"
+	MsgFileFetchSuccess = "Berhasil mendapatkan berkas"
+	MsgFileFetchFailed  = "Gagal mendapatkan berkas"
 )

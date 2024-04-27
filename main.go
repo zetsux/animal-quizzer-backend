@@ -25,6 +25,10 @@ func main() {
 		userC = controller.NewUserController(userS, jwtS)
 
 		fileC = controller.NewFileController()
+
+		animalTypeR = repository.NewAnimalTypeRepository(txR)
+		animalTypeS = service.NewAnimalTypeService(animalTypeR)
+		animalTypeC = controller.NewAnimalTypeController(animalTypeS)
 	)
 
 	defer config.DBClose(db)
@@ -38,6 +42,7 @@ func main() {
 	// Setting Up Routes
 	router.UserRouter(server, userC, jwtS)
 	router.FileRouter(server, fileC)
+	router.AnimalTypeRouter(server, animalTypeC)
 
 	// Running in localhost:8080
 	port := os.Getenv("PORT")

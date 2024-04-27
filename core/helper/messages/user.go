@@ -1,27 +1,25 @@
 package messages
 
 const (
-	MsgUserRegisterSuccess = "User register successful"
-	MsgUserRegisterFailed  = "Failed to process user register request"
+	MsgUserRegisterSuccess = "Berhasil mendaftarkan pengguna"
+	MsgUserRegisterFailed  = "Gagal memproses pendaftaran pengguna"
 
-	MsgUserLoginSuccess    = "User login successful"
-	MsgUserLoginFailed     = "Failed to process user login request"
-	MsgUserWrongCredential = "Entered credentials invalid"
+	MsgUserLoginSuccess    = "Berhasil memproses aksi login pengguna"
+	MsgUserLoginFailed     = "Gagal memproses aksi login pengguna"
+	MsgUserWrongCredential = "Username atau password yang dimasukkan salah"
 
-	MsgUsersFetchSuccess = "Users fetched successfully"
-	MsgUsersFetchFailed  = "Failed to fetch users"
-	MsgUserFetchSuccess  = "User fetched successfully"
-	MsgUserFetchFailed   = "Failed to fetch user"
+	MsgUserFetchSuccess = "Berhasil mendapatkan pengguna"
+	MsgUserFetchFailed  = "Gagal mendapatkan pengguna"
 
-	MsgUserUpdateSuccess = "User update successful"
-	MsgUserUpdateFailed  = "Failed to process user update request"
+	MsgUserUpdateSuccess = "Berhasil melakukan update terhadap pengguna"
+	MsgUserUpdateFailed  = "Gagal melakukan update terhadap pengguna"
 
-	MsgUserDeleteSuccess = "User delete successful"
-	MsgUserDeleteFailed  = "Failed to process user delete request"
+	MsgUserDeleteSuccess = "Berhasil menghapus pengguna"
+	MsgUserDeleteFailed  = "Gagal menghapus pengguna"
 
-	MsgUserPictureUpdateSuccess = "User picture update successful"
-	MsgUserPictureUpdateFailed  = "Failed to process user picture update request"
+	MsgUserPictureUpdateSuccess = "Berhasil melakukan upload gambar pengguna"
+	MsgUserPictureUpdateFailed  = "Gagal memproses upload gambar pengguna"
 
-	MsgUserPictureDeleteSuccess = "User picture delete successful"
-	MsgUserPictureDeleteFailed  = "Failed to process user picture delete request"
+	MsgUserPictureDeleteSuccess = "Berhasil menghapus gambar pengguna"
+	MsgUserPictureDeleteFailed  = "Gaga; menghapus gambar pengguna"
 )

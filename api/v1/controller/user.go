@@ -104,7 +104,7 @@ func (uc *userController) GetAllUsers(ctx *gin.Context) {
 	var req base.GetsRequest
 	if err := ctx.ShouldBind(&req); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse(
-			messages.MsgUsersFetchFailed,
+			messages.MsgUserFetchFailed,
 			err.Error(), http.StatusBadRequest,
 		))
 		return
@@ -113,7 +113,7 @@ func (uc *userController) GetAllUsers(ctx *gin.Context) {
 	users, pageMeta, err := uc.userService.GetAllUsers(ctx, req)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse(
-			messages.MsgUsersFetchFailed,
+			messages.MsgUserFetchFailed,
 			err.Error(), http.StatusBadRequest,
 		))
 		return
@@ -121,12 +121,12 @@ func (uc *userController) GetAllUsers(ctx *gin.Context) {
 
 	if reflect.DeepEqual(pageMeta, base.PaginationResponse{}) {
 		ctx.JSON(http.StatusOK, base.CreateSuccessResponse(
-			messages.MsgUsersFetchSuccess,
+			messages.MsgUserFetchSuccess,
 			http.StatusOK, users,
 		))
 	} else {
 		ctx.JSON(http.StatusOK, base.CreatePaginatedResponse(
-			messages.MsgUsersFetchSuccess,
+			messages.MsgUserFetchSuccess,
 			http.StatusOK, users, pageMeta,
 		))
 	}
