@@ -57,10 +57,16 @@ func (as *animalService) GetAnimalByID(ctx context.Context, id string) (dto.Anim
 	}
 
 	return dto.AnimalResponse{
-		ID:   animal.ID.String(),
-		Name: animal.Name,
-		Step: animal.Step,
-		Hint: animal.Hint,
+		ID:                 animal.ID.String(),
+		Name:               animal.Name,
+		Step:               animal.Step,
+		Hint:               animal.Hint,
+		Description:        animal.Description,
+		Habitat:            animal.Habitat,
+		Food:               animal.Food,
+		Reproduction:       animal.Reproduction,
+		FunFact:            animal.FunFact,
+		ConservationStatus: animal.ConservationStatus,
 		AnimalType: dto.AnimalTypeResponse{
 			ID:   animal.AnimalType.ID.String(),
 			Name: animal.AnimalType.Name,
