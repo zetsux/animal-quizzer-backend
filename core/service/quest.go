@@ -2,15 +2,14 @@ package service
 
 import (
 	"context"
-	"reflect"
 
-	"github.com/zetsux/gin-gorm-clean-starter/core/entity"
 	"github.com/zetsux/gin-gorm-clean-starter/core/helper/dto"
 	"github.com/zetsux/gin-gorm-clean-starter/core/repository"
 )
 
 type questService struct {
-	questRepository repository.QuestRepository
+	questRepository  repository.QuestRepository
+	animalRepository repository.AnimalRepository
 }
 
 type QuestService interface {
@@ -19,8 +18,8 @@ type QuestService interface {
 	AdvanceQuest(ctx context.Context, userID string, animalTypeID string) (dto.QuestResponse, error)
 }
 
-func NewQuestService(questR repository.QuestRepository) QuestService {
-	return &questService{questRepository: questR}
+func NewQuestService(questR repository.QuestRepository, animalR repository.AnimalRepository) QuestService {
+	return &questService{questRepository: questR, animalRepository: animalR}
 }
 
 func (qs *questService) GetAllUserQuests(ctx context.Context, userID string) (questsResp []dto.QuestResponse, err error) {
@@ -48,28 +47,16 @@ func (qs *questService) GetUserQuestByAnimalType(ctx context.Context, userID str
 		return dto.QuestResponse{}, err
 	}
 
-	if reflect.DeepEqual(quest, entity.Quest{}) {
-		quest = entity.Quest{
-			Step:         1,
-			UserID:       userID,
-			AnimalTypeID: animalTypeID,
-		}
-
-		// create new quest
-		quest, err = qs.questRepository.CreateNewQuest(ctx, nil, quest)
-		if err != nil {
-			return dto.QuestResponse{}, err
-		}
-
-		quest, err = qs.questRepository.GetUserQuestByAnimalType(ctx, nil, animalTypeID, userID)
-		if err != nil {
-			return dto.QuestResponse{}, err
-		}
+	animal, err := qs.animalRepository.GetCurrentTarget(ctx, nil, animalTypeID, quest.Step)
+	if err != nil {
+		return dto.QuestResponse{}, err
 	}
 
 	return dto.QuestResponse{
-		ID:   quest.ID.String(),
-		Step: quest.Step,
+		ID:              quest.ID.String(),
+		Step:            quest.Step,
+		Hint:            animal.Hint,
+		SilhouetteImage: animal.SilhouetteImage,
 		AnimalType: dto.AnimalTypeResponse{
 			ID:   quest.AnimalType.ID.String(),
 			Name: quest.AnimalType.Name,

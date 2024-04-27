@@ -20,6 +20,7 @@ type AnimalRepository interface {
 	GetAllAnimals(ctx context.Context, tx *gorm.DB, filter string) ([]entity.Animal, error)
 	GetAllAnimalsByUser(ctx context.Context, tx *gorm.DB, userID string, isOwned bool, filter string) ([]entity.Animal, error)
 	GetAnimal(ctx context.Context, tx *gorm.DB, id string) (entity.Animal, error)
+	GetCurrentTarget(ctx context.Context, tx *gorm.DB, animalTypeID string, step int) (entity.Animal, error)
 	IsCurrentTarget(ctx context.Context, tx *gorm.DB, userID string, animalID string) (bool, error)
 }
 
@@ -88,6 +89,22 @@ func (ar *animalRepository) GetAnimal(ctx context.Context, tx *gorm.DB, id strin
 		err = tx.Error
 	} else {
 		err = tx.WithContext(ctx).Debug().Preload("AnimalType").Where("id = $1", id).Take(&animal).Error
+	}
+
+	if err != nil && !(errors.Is(err, gorm.ErrRecordNotFound)) {
+		return animal, err
+	}
+	return animal, nil
+}
+
+func (ar *animalRepository) GetCurrentTarget(ctx context.Context, tx *gorm.DB, animalTypeID string, step int) (entity.Animal, error) {
+	var err error
+	var animal entity.Animal
+	if tx == nil {
+		tx = ar.txr.DB().WithContext(ctx).Debug().Where("animal_type_id = $1 AND step = $2", animalTypeID, step).Take(&animal)
+		err = tx.Error
+	} else {
+		err = tx.WithContext(ctx).Debug().Where("animal_type_id = $1 AND step = $2", animalTypeID, step).Take(&animal).Error
 	}
 
 	if err != nil && !(errors.Is(err, gorm.ErrRecordNotFound)) {

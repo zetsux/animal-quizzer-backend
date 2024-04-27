@@ -31,7 +31,7 @@ func main() {
 		animalC = controller.NewAnimalController(animalS)
 
 		questR = repository.NewQuestRepository(txR)
-		questS = service.NewQuestService(questR)
+		questS = service.NewQuestService(questR, animalR)
 		questC = controller.NewQuestController(questS)
 
 		userR = repository.NewUserRepository(txR)

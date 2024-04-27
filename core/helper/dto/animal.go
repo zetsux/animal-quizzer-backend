@@ -2,9 +2,9 @@ package dto
 
 type (
 	AnimalResponse struct {
-		ID                 string             `json:"id"`
-		Name               string             `json:"name"`
-		Step               int                `json:"step"`
+		ID                 string             `json:"id,omitempty"`
+		Name               string             `json:"name,omitempty"`
+		Step               int                `json:"step,omitempty"`
 		Hint               string             `json:"hint,omitempty"`
 		Description        string             `json:"description,omitempty"`
 		Habitat            string             `json:"habitat,omitempty"`
