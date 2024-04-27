@@ -25,15 +25,6 @@ func NewAnimalTypeController(animalTypeS service.AnimalTypeService) AnimalTypeCo
 }
 
 func (atc *animalTypeController) GetAllAnimalTypes(ctx *gin.Context) {
-	var req base.GetsRequest
-	if err := ctx.ShouldBind(&req); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse(
-			messages.MsgAnimalTypeFetchFailed,
-			err.Error(), http.StatusBadRequest,
-		))
-		return
-	}
-
 	animalTypes, err := atc.animalTypeService.GetAllAnimalTypes(ctx)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse(

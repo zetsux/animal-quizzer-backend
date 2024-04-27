@@ -8,9 +8,9 @@ import (
 
 type Quiz struct {
 	ID            uuid.UUID      `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
-	Question      string         `gorm:"question" json:"question"`
-	CorrectAnswer string         `gorm:"correct_answer" json:"correct_answer"`
-	WrongAnswer   pq.StringArray `gorm:"type:varchar(255)[]" json:"wrong_answers"`
+	Question      string         `json:"question" gorm:"not null"`
+	CorrectAnswer string         `json:"correct_answer" gorm:"not null"`
+	WrongAnswer   pq.StringArray `gorm:"type:varchar(255)[];not null" json:"wrong_answers"`
 	AnimalID      string         `json:"animal_id" gorm:"foreignKey:AnimalID"`
 	Animal        *Animal        `json:"animal,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	base.Model

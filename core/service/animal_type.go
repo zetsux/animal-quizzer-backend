@@ -2,8 +2,11 @@ package service
 
 import (
 	"context"
+	"reflect"
 
+	"github.com/zetsux/gin-gorm-clean-starter/core/entity"
 	"github.com/zetsux/gin-gorm-clean-starter/core/helper/dto"
+	errs "github.com/zetsux/gin-gorm-clean-starter/core/helper/errors"
 	"github.com/zetsux/gin-gorm-clean-starter/core/repository"
 )
 
@@ -39,6 +42,10 @@ func (ats *animalTypeService) GetAnimalTypeByID(ctx context.Context, id string) 
 	animalType, err := ats.animalTypeRepository.GetAnimalType(ctx, nil, id)
 	if err != nil {
 		return dto.AnimalTypeResponse{}, err
+	}
+
+	if reflect.DeepEqual(animalType, entity.AnimalType{}) {
+		return dto.AnimalTypeResponse{}, errs.ErrAnimalTypeNotFound
 	}
 
 	return dto.AnimalTypeResponse{

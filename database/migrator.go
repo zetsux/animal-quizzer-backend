@@ -11,6 +11,10 @@ import (
 func DBMigrate(db *gorm.DB) {
 	err := db.AutoMigrate(
 		entity.User{},
+		entity.AnimalType{},
+		entity.Animal{},
+		entity.Quest{},
+		entity.Quiz{},
 	)
 
 	if err != nil {

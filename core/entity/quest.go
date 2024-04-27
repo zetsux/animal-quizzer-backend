@@ -7,7 +7,7 @@ import (
 
 type Quest struct {
 	ID           uuid.UUID   `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
-	Step         int         `gorm:"step" json:"step"`
+	Step         int         `json:"step" gorm:"not null"`
 	UserID       string      `json:"user_id" gorm:"foreignKey:UserID"`
 	User         *User       `json:"user,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	AnimalTypeID string      `json:"animal_type_id" gorm:"foreignKey:AnimalTypeID"`

@@ -29,6 +29,14 @@ func main() {
 		animalTypeR = repository.NewAnimalTypeRepository(txR)
 		animalTypeS = service.NewAnimalTypeService(animalTypeR)
 		animalTypeC = controller.NewAnimalTypeController(animalTypeS)
+
+		animalR = repository.NewAnimalRepository(txR)
+		animalS = service.NewAnimalService(animalR)
+		animalC = controller.NewAnimalController(animalS)
+
+		questR = repository.NewQuestRepository(txR)
+		questS = service.NewQuestService(questR)
+		questC = controller.NewQuestController(questS, jwtS)
 	)
 
 	defer config.DBClose(db)
@@ -43,6 +51,8 @@ func main() {
 	router.UserRouter(server, userC, jwtS)
 	router.FileRouter(server, fileC)
 	router.AnimalTypeRouter(server, animalTypeC)
+	router.AnimalRouter(server, animalC)
+	router.QuestRouter(server, questC, jwtS)
 
 	// Running in localhost:8080
 	port := os.Getenv("PORT")

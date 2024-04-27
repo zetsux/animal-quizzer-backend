@@ -3,5 +3,5 @@ package errors
 import "errors"
 
 var (
-	ErrInvalidPage = errors.New("entered page is invalid")
+	ErrInvalidPage = errors.New("page yang dimasukkan tidak valid")
 )
