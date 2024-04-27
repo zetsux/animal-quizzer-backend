@@ -8,4 +8,10 @@ type (
 		SilhouetteImage string             `json:"silhouette_image"`
 		AnimalType      AnimalTypeResponse `json:"animal_type,omitempty"`
 	}
+
+	QuestLeaderboard struct {
+		Username string
+		Point    int
+		Time     string
+	}
 )

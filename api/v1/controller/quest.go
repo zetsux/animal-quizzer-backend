@@ -18,6 +18,8 @@ type QuestController interface {
 	GetAllUserQuests(ctx *gin.Context)
 	GetUserQuestByAnimalType(ctx *gin.Context)
 	AdvanceQuest(ctx *gin.Context)
+	GetQuestLeaderboard(ctx *gin.Context)
+	GetDailyQuestLeaderboard(ctx *gin.Context)
 }
 
 func NewQuestController(questS service.QuestService) QuestController {
@@ -78,5 +80,37 @@ func (qc *questController) AdvanceQuest(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, base.CreateSuccessResponse(
 		messages.MsgQuestUpdateSuccess,
 		http.StatusOK, quest,
+	))
+}
+
+func (qc *questController) GetQuestLeaderboard(ctx *gin.Context) {
+	leaderboard, err := qc.questService.GetQuestLeaderboard(ctx, false)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse(
+			messages.MsgQuestFetchFailed,
+			err.Error(), http.StatusBadRequest,
+		))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, base.CreateSuccessResponse(
+		messages.MsgQuestFetchSuccess,
+		http.StatusOK, leaderboard,
+	))
+}
+
+func (qc *questController) GetDailyQuestLeaderboard(ctx *gin.Context) {
+	leaderboard, err := qc.questService.GetQuestLeaderboard(ctx, true)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse(
+			messages.MsgQuestFetchFailed,
+			err.Error(), http.StatusBadRequest,
+		))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, base.CreateSuccessResponse(
+		messages.MsgQuestFetchSuccess,
+		http.StatusOK, leaderboard,
 	))
 }

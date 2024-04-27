@@ -16,6 +16,7 @@ type QuestService interface {
 	GetAllUserQuests(ctx context.Context, userID string) ([]dto.QuestResponse, error)
 	GetUserQuestByAnimalType(ctx context.Context, userID string, animalTypeID string) (dto.QuestResponse, error)
 	AdvanceQuest(ctx context.Context, userID string, animalTypeID string) (dto.QuestResponse, error)
+	GetQuestLeaderboard(ctx context.Context, isDaily bool) ([]dto.QuestLeaderboard, error)
 }
 
 func NewQuestService(questR repository.QuestRepository, animalR repository.AnimalRepository) QuestService {
@@ -84,4 +85,12 @@ func (qs *questService) AdvanceQuest(ctx context.Context, userID string, animalT
 			Name: quest.AnimalType.Name,
 		},
 	}, nil
+}
+
+func (qs *questService) GetQuestLeaderboard(ctx context.Context, isDaily bool) ([]dto.QuestLeaderboard, error) {
+	leaderboard, err := qs.questRepository.GetQuestLeaderboard(ctx, nil, isDaily)
+	if err != nil {
+		return nil, err
+	}
+	return leaderboard, nil
 }

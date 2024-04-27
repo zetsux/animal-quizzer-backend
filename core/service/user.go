@@ -73,7 +73,7 @@ func (us *userService) CreateNewUser(ctx context.Context, ud dto.UserAuthenticat
 		Username:    ud.Username,
 		Password:    ud.Password,
 		Role:        constant.EnumRoleUser,
-		LastAttempt: time.Now(),
+		LastAttempt: time.Now().Add(time.Minute * 1),
 	}
 
 	// create new user
