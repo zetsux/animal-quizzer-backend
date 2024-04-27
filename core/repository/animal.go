@@ -20,6 +20,7 @@ type AnimalRepository interface {
 	GetAllAnimals(ctx context.Context, tx *gorm.DB, filter string) ([]entity.Animal, error)
 	GetAllAnimalsByUser(ctx context.Context, tx *gorm.DB, userID string, isOwned bool, filter string) ([]entity.Animal, error)
 	GetAnimal(ctx context.Context, tx *gorm.DB, id string) (entity.Animal, error)
+	IsCurrentTarget(ctx context.Context, tx *gorm.DB, userID string, animalID string) (bool, error)
 }
 
 func NewAnimalRepository(txr *txRepository) *animalRepository {
@@ -93,4 +94,23 @@ func (ar *animalRepository) GetAnimal(ctx context.Context, tx *gorm.DB, id strin
 		return animal, err
 	}
 	return animal, nil
+}
+
+func (ar *animalRepository) IsCurrentTarget(ctx context.Context, tx *gorm.DB, userID string, animalID string) (bool, error) {
+	var err error
+	var animal entity.Animal
+	if tx == nil {
+		tx = ar.txr.DB().WithContext(ctx).Debug().Joins("INNER JOIN animal_types ON animals.animal_type_id = animal_types.id").Joins("INNER JOIN quests ON animal_types.id = quests.animal_type_id").Where("quests.user_id = $1 AND animals.step = quests.step AND animals.id = $2", userID, animalID).Take(&animal)
+		err = tx.Error
+	} else {
+		err = tx.WithContext(ctx).Debug().Joins("INNER JOIN animal_types ON animals.animal_type_id = animal_types.id").Joins("INNER JOIN quests ON animal_types.id = quests.animal_type_id").Where("quests.user_id = $1 AND animals.step = quests.step AND animals.id = $2", userID, animalID).Take(&animal).Error
+	}
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }

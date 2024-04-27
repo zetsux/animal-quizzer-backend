@@ -34,6 +34,10 @@ func main() {
 		questS = service.NewQuestService(questR)
 		questC = controller.NewQuestController(questS)
 
+		quizR = repository.NewQuizRepository(txR)
+		quizS = service.NewQuizService(quizR, animalR)
+		quizC = controller.NewQuizController(quizS)
+
 		userR = repository.NewUserRepository(txR)
 		userS = service.NewUserService(userR, animalTypeR, questR)
 		userC = controller.NewUserController(userS, jwtS)
@@ -53,6 +57,7 @@ func main() {
 	router.AnimalTypeRouter(server, animalTypeC)
 	router.AnimalRouter(server, animalC, jwtS)
 	router.QuestRouter(server, questC, jwtS)
+	router.QuizRouter(server, quizC, jwtS)
 
 	// Running in localhost:8080
 	port := os.Getenv("PORT")
