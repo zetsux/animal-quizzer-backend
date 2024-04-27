@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/zetsux/gin-gorm-clean-starter/common/base"
@@ -69,9 +70,10 @@ func (us *userService) CreateNewUser(ctx context.Context, ud dto.UserAuthenticat
 	}
 
 	user := entity.User{
-		Username: ud.Username,
-		Password: ud.Password,
-		Role:     constant.EnumRoleUser,
+		Username:    ud.Username,
+		Password:    ud.Password,
+		Role:        constant.EnumRoleUser,
+		LastAttempt: time.Now(),
 	}
 
 	// create new user

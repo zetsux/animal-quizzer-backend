@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"errors"
+	"time"
 
 	"github.com/zetsux/gin-gorm-clean-starter/common/constant"
 	"github.com/zetsux/gin-gorm-clean-starter/core/entity"
@@ -11,9 +12,10 @@ import (
 func UserSeeder(db *gorm.DB) error {
 	var dummyUsers = []entity.User{
 		{
-			Username: "admin1",
-			Password: "admin1",
-			Role:     constant.EnumRoleAdmin,
+			Username:    "admin1",
+			Password:    "admin1",
+			Role:        constant.EnumRoleAdmin,
+			LastAttempt: time.Now(),
 		},
 	}
 

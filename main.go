@@ -34,13 +34,13 @@ func main() {
 		questS = service.NewQuestService(questR)
 		questC = controller.NewQuestController(questS)
 
-		quizR = repository.NewQuizRepository(txR)
-		quizS = service.NewQuizService(quizR, animalR)
-		quizC = controller.NewQuizController(quizS)
-
 		userR = repository.NewUserRepository(txR)
 		userS = service.NewUserService(userR, animalTypeR, questR)
 		userC = controller.NewUserController(userS, jwtS)
+
+		quizR = repository.NewQuizRepository(txR)
+		quizS = service.NewQuizService(quizR, animalR, userR)
+		quizC = controller.NewQuizController(quizS)
 	)
 
 	defer config.DBClose(db)

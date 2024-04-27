@@ -13,5 +13,6 @@ func QuizRouter(router *gin.Engine, quizC controller.QuizController, jwtS servic
 	quizRoutes := router.Group("/api/v1/quizzes")
 	{
 		quizRoutes.GET("/:animal_id", middleware.Authenticate(jwtS, constant.EnumRoleUser), quizC.GetAnimalQuiz)
+		quizRoutes.PATCH("/", middleware.Authenticate(jwtS, constant.EnumRoleUser), quizC.SetQuizCooldown)
 	}
 }
