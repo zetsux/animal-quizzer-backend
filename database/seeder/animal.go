@@ -20,6 +20,9 @@ func AnimalSeeder(db *gorm.DB, animalTypeMap map[string]string) (map[string]stri
 			Reproduction:       "Bertelur",
 			FunFact:            "Buaya dapat hidup hingga lebih dari 70 tahun di alam liar.",
 			ConservationStatus: "Bergantung pada spesies; beberapa genting",
+			BadgeImage:         "badge_picture/85f4b75d-a723-4c13-b19e-f7aa4dd15bc1.png",
+			RealImage:          "animal_picture/5aa41bb3-a753-4786-a03e-72dfe54b6e5c.png",
+			SilhouetteImage:    "silhouette_picture/d27257b7-3511-4dfa-b938-b589f87bc384.png",
 		},
 		{
 			Name:               "Ular Kobra",
@@ -32,6 +35,9 @@ func AnimalSeeder(db *gorm.DB, animalTypeMap map[string]string) (map[string]stri
 			Reproduction:       "Bertelur",
 			FunFact:            "Kobra dapat 'berjalan' dengan mengangkat sepertiga tubuhnya saat merasa terancam.",
 			ConservationStatus: "Bergantung pada spesies; beberapa genting",
+			BadgeImage:         "badge_picture/b628e3f3-953d-46a1-93d8-218acc779335.png",
+			RealImage:          "animal_picture/063f942d-bca0-4a5f-b34c-b8326f4cb1a9.png",
+			SilhouetteImage:    "silhouette_picture/12c7f591-3978-4c79-89d1-df510c8a39f6.png",
 		},
 		{
 			Name:               "Komodo",

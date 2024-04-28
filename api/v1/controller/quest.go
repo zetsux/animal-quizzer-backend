@@ -66,9 +66,9 @@ func (qc *questController) GetUserQuestByAnimalType(ctx *gin.Context) {
 
 func (qc *questController) AdvanceQuest(ctx *gin.Context) {
 	userID := ctx.MustGet("ID").(string)
-	animalTypeID := ctx.Param("animal_type_id")
+	animalID := ctx.Param("animal_id")
 
-	quest, err := qc.questService.AdvanceQuest(ctx, userID, animalTypeID)
+	quest, err := qc.questService.AdvanceQuest(ctx, userID, animalID)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, base.CreateFailResponse(
 			messages.MsgQuestUpdateFailed,

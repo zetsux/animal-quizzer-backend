@@ -21,6 +21,7 @@ type QuestRepository interface {
 	// functional
 	GetAllUserQuests(ctx context.Context, tx *gorm.DB, userID string) ([]entity.Quest, error)
 	GetUserQuestByAnimalType(ctx context.Context, tx *gorm.DB, animalTypeID string, userID string) (entity.Quest, error)
+	GetUserQuestByAnimal(ctx context.Context, tx *gorm.DB, animalID string, userID string) (entity.Quest, error)
 	CreateNewQuest(ctx context.Context, tx *gorm.DB, quest entity.Quest) (entity.Quest, error)
 	UpdateQuest(ctx context.Context, tx *gorm.DB, quest entity.Quest) (entity.Quest, error)
 	GetQuestLeaderboard(ctx context.Context, tx *gorm.DB, isDaily bool) ([]dto.QuestLeaderboard, error)
@@ -58,6 +59,22 @@ func (qr *questRepository) GetUserQuestByAnimalType(ctx context.Context, tx *gor
 		err = tx.Error
 	} else {
 		err = tx.WithContext(ctx).Debug().Preload("AnimalType").Where("animal_type_id = $1 AND user_id = $2", animalTypeID, userID).Find(&quest).Error
+	}
+
+	if err != nil && !(errors.Is(err, gorm.ErrRecordNotFound)) {
+		return quest, err
+	}
+	return quest, nil
+}
+
+func (qr *questRepository) GetUserQuestByAnimal(ctx context.Context, tx *gorm.DB, animalID string, userID string) (entity.Quest, error) {
+	var err error
+	var quest entity.Quest
+	if tx == nil {
+		tx = qr.txr.DB().WithContext(ctx).Debug().Preload("AnimalType").Joins("INNER JOIN animal_types ON quests.animal_type_id = animal_types.id").Joins("INNER JOIN animals ON animal_types.id = animals.animal_type_id").Where("animals.id = $1 AND user_id = $2", animalID, userID).Find(&quest)
+		err = tx.Error
+	} else {
+		err = tx.WithContext(ctx).Debug().Preload("AnimalType").Joins("INNER JOIN animal_types ON quests.animal_type_id = animal_types.id").Joins("INNER JOIN animals ON animal_types.id = animals.animal_type_id").Where("animals.id = $1 AND user_id = $2", animalID, userID).Find(&quest).Error
 	}
 
 	if err != nil && !(errors.Is(err, gorm.ErrRecordNotFound)) {

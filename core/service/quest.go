@@ -15,7 +15,7 @@ type questService struct {
 type QuestService interface {
 	GetAllUserQuests(ctx context.Context, userID string) ([]dto.QuestResponse, error)
 	GetUserQuestByAnimalType(ctx context.Context, userID string, animalTypeID string) (dto.QuestResponse, error)
-	AdvanceQuest(ctx context.Context, userID string, animalTypeID string) (dto.QuestResponse, error)
+	AdvanceQuest(ctx context.Context, userID string, animalID string) (dto.QuestResponse, error)
 	GetQuestLeaderboard(ctx context.Context, isDaily bool) ([]dto.QuestLeaderboard, error)
 }
 
@@ -65,8 +65,8 @@ func (qs *questService) GetUserQuestByAnimalType(ctx context.Context, userID str
 	}, nil
 }
 
-func (qs *questService) AdvanceQuest(ctx context.Context, userID string, animalTypeID string) (dto.QuestResponse, error) {
-	quest, err := qs.questRepository.GetUserQuestByAnimalType(ctx, nil, animalTypeID, userID)
+func (qs *questService) AdvanceQuest(ctx context.Context, userID string, animalID string) (dto.QuestResponse, error) {
+	quest, err := qs.questRepository.GetUserQuestByAnimal(ctx, nil, animalID, userID)
 	if err != nil {
 		return dto.QuestResponse{}, err
 	}

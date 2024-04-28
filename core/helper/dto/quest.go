@@ -4,8 +4,8 @@ type (
 	QuestResponse struct {
 		ID              string             `json:"id"`
 		Step            int                `json:"step"`
-		Hint            string             `json:"hint"`
-		SilhouetteImage string             `json:"silhouette_image"`
+		Hint            string             `json:"hint,omitempty"`
+		SilhouetteImage string             `json:"silhouette_image,omitempty"`
 		AnimalType      AnimalTypeResponse `json:"animal_type,omitempty"`
 	}
 
